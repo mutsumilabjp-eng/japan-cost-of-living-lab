@@ -1,0 +1,22 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Tokyo Move-In Cost Quick Calculator</title><style>
+body{margin:0;background:#f7f2e8;color:#16201a;font:17px/1.55 system-ui,sans-serif}main{max-width:980px;margin:auto;padding:32px}a{color:#2e6f73}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}label{display:grid;gap:6px;font-weight:650}input{font:inherit;padding:11px;border:1px solid #bcae98;background:#fffdf8}.result{margin:28px 0;padding:25px;background:#16201a;color:white}.number{font-size:clamp(2.4rem,8vw,4.8rem);font-weight:800}button,.buy{display:inline-block;border:0;background:#c84c31;color:white;padding:13px 18px;font:inherit;font-weight:750;text-decoration:none;cursor:pointer}small{color:#52685c}table{width:100%;border-collapse:collapse}td{padding:8px;border-bottom:1px solid #d7c9b2}td:last-child{text-align:right;font-variant-numeric:tabular-nums}</style></head><body><main>
+<a href="/">Japan Cost of Living Lab</a><h1>Tokyo Move-In Cost Quick Calculator</h1><p>Build a planning estimate for the cash needed through day 90. Replace every assumption with the written apartment quote and confirmed payroll dates.</p>
+<div class="grid">
+<label>Monthly rent (¥)<input id="rent" type="number" min="0" value="90000"></label>
+<label>Deposit (months)<input id="deposit" type="number" min="0" step="0.5" value="1"></label>
+<label>Key money (months)<input id="key" type="number" min="0" step="0.5" value="1"></label>
+<label>Agency fee (months)<input id="agency" type="number" min="0" step="0.5" value="1"></label>
+<label>Guarantor fee (months)<input id="guarantor" type="number" min="0" step="0.1" value="0.5"></label>
+<label>Insurance / locks / other (¥)<input id="other" type="number" min="0" value="50000"></label>
+<label>Furniture and setup (¥)<input id="setup" type="number" min="0" value="120000"></label>
+<label>Monthly non-rent living cost (¥)<input id="living" type="number" min="0" value="120000"></label>
+<label>Emergency buffer (¥)<input id="buffer" type="number" min="0" value="300000"></label>
+</div><p><button id="calculate">Calculate the 90-day cash plan</button></p>
+<section class="result" aria-live="polite"><div>Estimated cash required through day 90</div><div class="number" id="total">—</div></section>
+<table><tr><td>Cash due around the contract</td><td id="contract">—</td></tr><tr><td>Setup spending</td><td id="setupOut">—</td></tr><tr><td>Remaining rent through day 90</td><td id="rentOut">—</td></tr><tr><td>Non-rent living costs for 3 months</td><td id="livingOut">—</td></tr><tr><td>Emergency buffer</td><td id="bufferOut">—</td></tr></table>
+<h2>What this estimate does not know</h2><p>Screening, taxes, utilities, payroll timing, airfare, temporary lodging, reimbursement timing, and property-specific fees can change the result. This is a planning tool, not a quote or financial advice.</p>
+<p><a class="buy" href="https://ko-fi.com/s/219180e4c6">Plan the full 90 days in the editable workbook — ¥3,980 once</a></p><small>No automatic renewal. Ko-fi handles payment and digital delivery.</small>
+</main><script>
+const yen=n=>new Intl.NumberFormat('ja-JP',{style:'currency',currency:'JPY',maximumFractionDigits:0}).format(n);const v=id=>Math.max(0,Number(document.getElementById(id).value)||0);
+function calculate(){const rent=v('rent');const contract=rent*(1+v('deposit')+v('key')+v('agency')+v('guarantor'))+v('other');const setup=v('setup');const remainingRent=rent*2;const living=v('living')*3;const buffer=v('buffer');const total=contract+setup+remainingRent+living+buffer;for(const [id,n] of [['contract',contract],['setupOut',setup],['rentOut',remainingRent],['livingOut',living],['bufferOut',buffer],['total',total]])document.getElementById(id).textContent=yen(n)}
+document.getElementById('calculate').addEventListener('click',calculate);calculate();</script></body></html>
