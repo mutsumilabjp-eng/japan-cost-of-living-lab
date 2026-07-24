@@ -1,25 +1,121 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Tokyo Move-In Cost Quick Calculator</title><style>
-body{margin:0;background:#f7f2e8;color:#16201a;font:17px/1.55 system-ui,sans-serif}main{max-width:980px;margin:auto;padding:32px}a{color:#2e6f73}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}label{display:grid;gap:6px;font-weight:650}input{font:inherit;padding:11px;border:1px solid #bcae98;background:#fffdf8}.result{margin:28px 0;padding:25px;background:#16201a;color:white;border-left:8px solid #7a8b81}.result.safe{border-color:#2e7d59}.result.tight{border-color:#c98a1e}.result.risk{border-color:#c84c31}.verdict{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}.tag{font-weight:800;letter-spacing:.04em;text-transform:uppercase;font-size:13px;padding:5px 11px;border-radius:999px;background:#7a8b81;color:#16201a;white-space:nowrap}.result.safe .tag{background:#3fae7a}.result.tight .tag{background:#e0a83a}.result.risk .tag{background:#e5765a}#verdictLine{font-size:16px;color:#eef2ef;max-width:60ch}.split{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:4px}.split .lbl{font-size:13px;color:#c9d3cd;margin-bottom:2px}.number{font-size:clamp(2.2rem,7vw,4rem);font-weight:800;line-height:1.02}.number.small{font-size:clamp(1.5rem,5vw,2.4rem);color:#dfe6e1}@media(max-width:640px){.split{grid-template-columns:1fr}}button,.buy{display:inline-block;border:0;background:#c84c31;color:white;padding:13px 18px;font:inherit;font-weight:750;text-decoration:none;cursor:pointer}small{color:#52685c}table{width:100%;border-collapse:collapse}td{padding:8px;border-bottom:1px solid #d7c9b2}td:last-child{text-align:right;font-variant-numeric:tabular-nums}</style></head><body><main>
-<a href="https://mutsumilabjp-eng.github.io/japan-cost-of-living-lab/">Japan Cost of Living Lab</a><h1>Tokyo Move-In Cost Quick Calculator</h1><p>See whether your savings cover the cash you need before your first full paycheck in Tokyo — and the size of the gap if they do not. Replace every assumption with your written apartment quote and confirmed payroll dates.</p>
-<div class="grid">
-<label>Monthly rent (¥)<input id="rent" type="number" min="0" value="90000"></label>
-<label>Deposit (months)<input id="deposit" type="number" min="0" step="0.5" value="1"></label>
-<label>Key money (months)<input id="key" type="number" min="0" step="0.5" value="1"></label>
-<label>Agency fee (months)<input id="agency" type="number" min="0" step="0.5" value="1"></label>
-<label>Guarantor fee (months)<input id="guarantor" type="number" min="0" step="0.1" value="0.5"></label>
-<label>Insurance / locks / other (¥)<input id="other" type="number" min="0" value="50000"></label>
-<label>Furniture and setup (¥)<input id="setup" type="number" min="0" value="120000"></label>
-<label>Monthly non-rent living cost (¥)<input id="living" type="number" min="0" value="120000"></label>
-<label>Emergency buffer (¥)<input id="buffer" type="number" min="0" value="300000"></label>
-<label>Savings ready for the move (¥)<input id="savings" type="number" min="0" value="1000000"></label>
-<label>Weeks until your first full paycheck<input id="weeks" type="number" min="0" step="1" value="8"></label>
-</div><p><button id="calculate">Calculate the 90-day cash plan</button></p>
-<section class="result" id="result" aria-live="polite"><div class="verdict"><span class="tag" id="verdictTag">—</span><span id="verdictLine">Enter your numbers and get your cash-gap check.</span></div><div class="split"><div><div class="lbl">Cash needed before your first full paycheck</div><div class="number" id="preNeed">—</div></div><div><div class="lbl">Total cash to reach day 90</div><div class="number small" id="total">—</div></div></div></section>
-<table><tr><td>Cash due around the contract</td><td id="contract">—</td></tr><tr><td>Setup spending</td><td id="setupOut">—</td></tr><tr><td>Remaining rent through day 90</td><td id="rentOut">—</td></tr><tr><td>Non-rent living costs for 3 months</td><td id="livingOut">—</td></tr><tr><td>Emergency buffer</td><td id="bufferOut">—</td></tr></table>
-<h2>What this estimate does not know</h2><p>Screening, taxes, utilities, payroll timing, airfare, temporary lodging, reimbursement timing, and property-specific fees can change the result. This is a planning tool, not a quote or financial advice.</p>
-<h2>This calculator gives a quick estimate. The Rent Desk helps with one real decision.</h2><p>Once a real salary offer, a savings balance, or a written apartment quote enters the picture, the question usually stops being about how much and starts being about this one apartment. The <a href="https://mutsumilabjp-eng.github.io/japan-cost-of-living-lab/tokyo-first-90-days-rent-desk/">Tokyo First 90 Days Rent Desk</a> compares all 23 Tokyo wards, 12 salary scenarios, and two written quotes side by side, so you can see what a specific apartment does to your first 90 days before you sign anything.</p>
-<p><a class="buy" href="https://ko-fi.com/s/219180e4c6">Get the Rent Desk — ¥3,980 once</a></p><small>No automatic renewal. Ko-fi handles payment and digital delivery.</small>
-</main><script>
-const yen=n=>new Intl.NumberFormat('ja-JP',{style:'currency',currency:'JPY',maximumFractionDigits:0}).format(n);const v=id=>Math.max(0,Number(document.getElementById(id).value)||0);
-function calculate(){const rent=v('rent');const contract=rent*(1+v('deposit')+v('key')+v('agency')+v('guarantor'))+v('other');const setup=v('setup');const monthlyLiving=v('living');const remainingRent=rent*2;const living=monthlyLiving*3;const buffer=v('buffer');const total=contract+setup+remainingRent+living+buffer;const savings=v('savings');const months=v('weeks')/4.345;const preNeed=contract+setup+(rent+monthlyLiving)*months;const spare=savings-preNeed;const result=document.getElementById('result');result.classList.remove('safe','tight','risk');let cls,tag,line;if(savings>=preNeed+buffer){cls='safe';tag='Safe';line='Your savings cover the cash needed before your first paycheck, with about '+yen(spare)+' to spare — enough to keep an emergency buffer.';}else if(savings>=preNeed){cls='tight';tag='Tight';line='You can cover the essentials, but only about '+yen(spare)+' is left over. That is a thin buffer if move-in or payroll slips.';}else{cls='risk';tag='High Risk';line='You face a '+yen(preNeed-savings)+' cash gap before your first full paycheck. Close it with more savings, a lower deposit apartment, or employer move-in support before you sign.';}result.classList.add(cls);document.getElementById('verdictTag').textContent=tag;document.getElementById('verdictLine').textContent=line;for(const [id,n] of [['contract',contract],['setupOut',setup],['rentOut',remainingRent],['livingOut',living],['bufferOut',buffer],['total',total],['preNeed',preNeed]])document.getElementById(id).textContent=yen(n)}
-document.getElementById('calculate').addEventListener('click',calculate);calculate();</script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Check the cash you need before your first full paycheck in Tokyo.">
+  <meta name="theme-color" content="#172c24">
+  <link rel="icon" type="image/png" href="https://mutsumilabjp-eng.github.io/japan-cost-of-living-lab/assets/avatar.png">
+  <title>Tokyo move-in cash gap calculator</title>
+  <style>
+  :root{--paper:#f5efe4;--paper2:#e9dfcf;--ink:#172c24;--muted:#617068;--rust:#bd5438;--teal:#2d6b6b;--line:#d4c6b0;--white:#fffdf8;--dark:#13251f}
+  *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--paper);color:var(--ink);font:17px/1.62 ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}a{color:var(--teal);text-underline-offset:4px}a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid #e2a15f;outline-offset:3px}
+  header{border-bottom:1px solid var(--line);background:rgba(245,239,228,.95);position:sticky;top:0;z-index:5;backdrop-filter:blur(14px)}nav{max-width:1160px;margin:auto;padding:13px 24px;display:flex;align-items:center;justify-content:space-between;gap:20px}nav a{color:var(--ink);font-weight:800;text-decoration:none}nav span{color:var(--muted);font-size:13px}
+  main{max-width:1160px;margin:auto;padding:62px 24px 100px}.intro{display:grid;grid-template-columns:1.15fr .85fr;gap:70px;align-items:end;margin-bottom:50px}.eyebrow{color:var(--rust);font-size:11px;font-weight:900;letter-spacing:.18em;text-transform:uppercase}h1,h2,h3{font-family:Iowan Old Style,Baskerville,Georgia,serif;letter-spacing:-.035em;text-wrap:balance}h1{font-size:clamp(3rem,7vw,6.1rem);line-height:.92;margin:.16em 0 .3em}h2{font-size:clamp(1.9rem,4vw,3rem);line-height:1.08}.intro p{color:#4f6057;font-size:19px;max-width:60ch}.source-note{border-left:2px solid var(--rust);padding-left:18px;color:var(--muted);font-size:13px}
+  .calculator{display:grid;grid-template-columns:1.08fr .92fr;gap:24px;align-items:start}.inputs{background:var(--white);padding:32px}.group{border:0;padding:0;margin:0 0 34px}legend{font:700 1.45rem Iowan Old Style,Baskerville,Georgia,serif;margin-bottom:16px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}label{display:grid;gap:6px;font-size:13px;font-weight:800}input{width:100%;min-height:48px;border:1px solid var(--line);background:#fff;padding:11px 12px;font:inherit;border-radius:2px;font-variant-numeric:tabular-nums}.calculate{border:0;background:var(--rust);color:#fff;padding:13px 19px;min-height:50px;font:inherit;font-weight:850;cursor:pointer;border-radius:3px;transition:transform .2s,background .2s}.calculate:hover{background:#a94730;transform:translateY(-2px)}.calculate:active{transform:translateY(1px)}
+  .result{position:sticky;top:88px;background:var(--dark);color:#fff;padding:32px;border-top:8px solid #87948d;box-shadow:16px 18px 0 var(--paper2)}.result.safe{border-color:#66a77f}.result.tight{border-color:#dfaa52}.result.risk{border-color:#d9684d}.verdict{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:20px}.tag{font-size:12px;font-weight:900;letter-spacing:.09em;text-transform:uppercase;padding:6px 9px;background:#87948d;color:var(--dark)}.result.safe .tag{background:#75bd91}.result.tight .tag{background:#e8b761}.result.risk .tag{background:#e77a5d}#verdictLine{color:#d7e0da;font-size:14px;max-width:58ch}.label{font-size:11px;color:#aab9b1;letter-spacing:.08em;text-transform:uppercase}.number{font:750 clamp(3rem,7vw,5rem)/.94 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:-.07em;margin:7px 0 25px;font-variant-numeric:tabular-nums}.number.small{font-size:clamp(1.8rem,4vw,2.8rem);color:#d8e2dc}.breakdown{width:100%;border-collapse:collapse;margin:26px 0}.breakdown td{padding:9px 0;border-bottom:1px solid rgba(255,255,255,.14);font-size:13px;color:#cbd6cf}.breakdown td:last-child{text-align:right;color:#fff;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-variant-numeric:tabular-nums}
+  .result-form{border-top:1px solid rgba(255,255,255,.2);padding-top:22px;margin-top:22px}.result-form>label{font:700 1.18rem/1.25 Iowan Old Style,Baskerville,Georgia,serif;color:#fff;margin-bottom:12px}.email-row{display:grid;grid-template-columns:1fr auto;gap:8px}.email-row button{border:0;background:var(--rust);color:#fff;padding:10px 14px;font-weight:850;cursor:pointer}.result-form small{display:block;color:#aebdb5;margin-top:10px;font-size:11px;line-height:1.5}.result-form small a{color:#d5e6dc}.pending{color:#d7e0da;border-top:1px solid rgba(255,255,255,.2);padding-top:18px}
+  .after{display:grid;grid-template-columns:1fr 1fr;gap:60px;margin-top:100px}.after h2{margin-top:0}.after p,.after li{color:#52635a}.product-box{background:var(--paper2);padding:30px}.buy{display:inline-flex;background:var(--dark);color:#fff!important;padding:13px 18px;text-decoration:none;font-weight:850;margin-top:10px}
+  @media(max-width:850px){main{padding:38px 17px 75px}nav{padding:11px 16px}nav span{display:none}.intro,.calculator,.after{grid-template-columns:1fr;gap:35px}.grid{grid-template-columns:1fr}.result{position:static;box-shadow:9px 10px 0 var(--paper2)}.email-row{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<header><nav><a href="https://mutsumilabjp-eng.github.io/japan-cost-of-living-lab/">Japan Cost of Living Lab</a><span>Tokyo decision tools · Last verified July 2026</span></nav></header>
+<main>
+  <section class="intro">
+    <div><div class="eyebrow">Free Tokyo cash diagnosis</div><h1>Will your savings reach payday?</h1><p>Enter the apartment costs, setup cash, living budget, and confirmed payroll wait. You’ll get a Safe, Tight, or High Risk reading—not just one large total.</p></div>
+    <p class="source-note">Planning estimate only. Replace every default with a written apartment quote and your employer’s confirmed payroll dates.</p>
+  </section>
+  <section class="calculator">
+    <div class="inputs">
+      <fieldset class="group"><legend>1. Apartment contract</legend><div class="grid">
+        <label>Monthly rent (¥)<input id="rent" type="number" min="0" value="90000"></label>
+        <label>Deposit (months)<input id="deposit" type="number" min="0" step="0.5" value="1"></label>
+        <label>Key money (months)<input id="key" type="number" min="0" step="0.5" value="1"></label>
+        <label>Agency fee (months)<input id="agency" type="number" min="0" step="0.5" value="1"></label>
+        <label>Guarantor fee (months)<input id="guarantor" type="number" min="0" step="0.1" value="0.5"></label>
+        <label>Insurance, locks, other (¥)<input id="other" type="number" min="0" value="50000"></label>
+      </div></fieldset>
+      <fieldset class="group"><legend>2. Arrival and runway</legend><div class="grid">
+        <label>Furniture and setup (¥)<input id="setup" type="number" min="0" value="120000"></label>
+        <label>Monthly non-rent costs (¥)<input id="living" type="number" min="0" value="120000"></label>
+        <label>Emergency buffer (¥)<input id="buffer" type="number" min="0" value="300000"></label>
+        <label>Savings ready for the move (¥)<input id="savings" type="number" min="0" value="1000000"></label>
+        <label>Weeks until first full paycheck<input id="weeks" type="number" min="0" step="1" value="8"></label>
+      </div></fieldset>
+      <button class="calculate" id="calculate" type="button">Calculate my cash gap</button>
+    </div>
+    <aside class="result" id="result" aria-live="polite">
+      <div class="verdict"><span class="tag" id="verdictTag">—</span><span id="verdictLine">Enter your numbers and run the diagnosis.</span></div>
+      <div class="label">Cash needed before your first full paycheck</div><div class="number" id="preNeed">—</div>
+      <div class="label">Total cash to reach day 90</div><div class="number small" id="total">—</div>
+      <table class="breakdown">
+        <tr><td>Contract cash</td><td id="contract">—</td></tr>
+        <tr><td>Setup spending</td><td id="setupOut">—</td></tr>
+        <tr><td>Remaining 90-day rent</td><td id="rentOut">—</td></tr>
+        <tr><td>Three months, non-rent</td><td id="livingOut">—</td></tr>
+        <tr><td>Emergency buffer</td><td id="bufferOut">—</td></tr>
+      </table>
+      <form class="result-form seva-form formkit-form" id="resultForm" action="https://app.kit.com/forms/9720698/subscriptions" method="post" data-provider="kit" data-sv-form="9720698" data-uid="3ead2410b7" data-format="inline" data-version="5">
+  <input type="hidden" name="fields[signup_source]" value="calculator_result">
+  <input id="kitStatus" type="hidden" name="fields[cash_gap_status]" value="">
+  <input id="kitGap" type="hidden" name="fields[cash_gap_amount]" value="">
+  <input id="kitNeed" type="hidden" name="fields[cash_needed_before_paycheck]" value="">
+  <label for="resultEmail">Keep this result on screen. Send me the 10-point Tokyo Move Money Checklist.</label>
+  <div class="email-row">
+    <input class="formkit-input" id="resultEmail" name="email_address" type="email" autocomplete="email" placeholder="you@example.com" required>
+    <button class="formkit-submit" data-element="submit" type="submit">Send the checklist</button>
+  </div>
+  <small>Japan Cost Update sends useful cost changes, not daily noise. Unsubscribe anytime. <a href="https://mutsumilabjp-eng.github.io/japan-cost-of-living-lab/privacy/">Privacy</a>.</small>
+</form>
+    </aside>
+  </section>
+  <section class="after">
+    <div><div class="eyebrow">Limits</div><h2>What this estimate cannot know</h2><p>Screening, taxes, utilities, airfare, temporary lodging, reimbursement timing, payroll cutoffs, and property-specific fees can change the result. This tool is not a quote, financial advice, or a guarantee that an apartment application will be accepted.</p></div>
+    <div class="product-box"><div class="eyebrow">When the quote is real</div><h2>Compare the actual decision.</h2><p>The <a href="https://mutsumilabjp-eng.github.io/japan-cost-of-living-lab/tokyo-first-90-days-rent-desk/">Tokyo First 90 Days Rent Desk</a> compares all 23 wards, 12 salary scenarios, and two written quotes side by side.</p><a class="buy" href="https://ko-fi.com/s/219180e4c6">Get the Rent Desk — ¥3,980 once</a><p><small>No automatic renewal. Ko-fi handles payment and digital delivery.</small></p></div>
+  </section>
+</main>
+<script>
+const yen=n=>new Intl.NumberFormat('ja-JP',{style:'currency',currency:'JPY',maximumFractionDigits:0}).format(Math.round(n));
+const value=id=>Math.max(0,Number(document.getElementById(id).value)||0);
+function calculate(){
+  const rent=value('rent');
+  const contract=rent*(1+value('deposit')+value('key')+value('agency')+value('guarantor'))+value('other');
+  const setup=value('setup');
+  const monthlyLiving=value('living');
+  const remainingRent=rent*2;
+  const living=monthlyLiving*3;
+  const buffer=value('buffer');
+  const total=contract+setup+remainingRent+living+buffer;
+  const savings=value('savings');
+  const months=value('weeks')/4.345;
+  const preNeed=contract+setup+(rent+monthlyLiving)*months;
+  const spare=savings-preNeed;
+  const result=document.getElementById('result');
+  result.classList.remove('safe','tight','risk');
+  let cls,tag,line,gap=0;
+  if(savings>=preNeed+buffer){
+    cls='safe';tag='Safe';line='Your savings cover the pre-payday cash need and preserve the emergency buffer. Estimated spare cash: '+yen(spare)+'.';
+  }else if(savings>=preNeed){
+    cls='tight';tag='Tight';line='The essentials fit, but only '+yen(spare)+' remains before payday. One delay or extra fee can break the plan.';
+  }else{
+    gap=preNeed-savings;cls='risk';tag='High Risk';line='You face an estimated '+yen(gap)+' cash gap before your first full paycheck. Change the plan before signing.';
+  }
+  result.classList.add(cls);
+  document.getElementById('verdictTag').textContent=tag;
+  document.getElementById('verdictLine').textContent=line;
+  for(const [id,number] of [['contract',contract],['setupOut',setup],['rentOut',remainingRent],['livingOut',living],['bufferOut',buffer],['total',total],['preNeed',preNeed]]) document.getElementById(id).textContent=yen(number);
+  const status=document.getElementById('kitStatus');
+  if(status){
+    status.value=tag;
+    document.getElementById('kitGap').value=String(Math.round(gap));
+    document.getElementById('kitNeed').value=String(Math.round(preNeed));
+  }
+}
+document.getElementById('calculate').addEventListener('click',calculate);
+for(const field of document.querySelectorAll('.inputs input')) field.addEventListener('change',calculate);
+calculate();
+</script>
+<script async src='https://f.convertkit.com/ckjs/ck.5.js'></script>
+</body>
+</html>
