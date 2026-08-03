@@ -3,10 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="Check the cash you need before your first full paycheck in Tokyo.">
+  <meta name="description" content="Build a Tokyo cash timeline from written apartment quote to first full paycheck.">
   <meta name="theme-color" content="#172c24">
   <link rel="icon" type="image/png" href="https://mutsumilabjp-eng.github.io/japan-cost-of-living-lab/assets/avatar.png">
-  <title>Tokyo move-in cash gap calculator</title>
+  <title>Tokyo first paycheck cash timeline calculator</title>
   <style>
   :root{--paper:#f5efe4;--paper2:#e9dfcf;--ink:#172c24;--muted:#617068;--rust:#bd5438;--teal:#2d6b6b;--line:#d4c6b0;--white:#fffdf8;--dark:#13251f}
   *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--paper);color:var(--ink);font:17px/1.62 ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}a{color:var(--teal);text-underline-offset:4px}a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid #e2a15f;outline-offset:3px}
@@ -23,7 +23,7 @@
 <header><nav><a href="https://mutsumilabjp-eng.github.io/japan-cost-of-living-lab/">Japan Cost of Living Lab</a><span>Tokyo decision tools · Last verified July 2026</span></nav></header>
 <main>
   <section class="intro">
-    <div><div class="eyebrow">Free Tokyo cash diagnosis</div><h1>Will your savings reach payday?</h1><p>Enter the apartment costs, setup cash, living budget, and confirmed payroll wait. You’ll get a Safe, Tight, or High Risk reading—not just one large total.</p></div>
+    <div><div class="eyebrow">Free Tokyo cash timeline</div><h1>Will your cash survive from keys to payday?</h1><p>Enter the written apartment quote, setup cash, living budget, and confirmed payroll wait. You’ll get a Safe, Tight, or High Risk reading—not just one large total.</p></div>
     <p class="source-note">Planning estimate only. Replace every default with a written apartment quote and your employer’s confirmed payroll dates.</p>
   </section>
   <section class="calculator">
@@ -61,10 +61,10 @@
   <input id="kitStatus" type="hidden" name="fields[cash_gap_status]" value="">
   <input id="kitGap" type="hidden" name="fields[cash_gap_amount]" value="">
   <input id="kitNeed" type="hidden" name="fields[cash_needed_before_paycheck]" value="">
-  <label for="resultEmail">Keep this result on screen. Send me the 10-point Tokyo Move Money Checklist.</label>
+  <label for="resultEmail">Keep this result on screen. Send me the first-paycheck cash checklist.</label>
   <div class="email-row">
     <input class="formkit-input" id="resultEmail" name="email_address" type="email" autocomplete="email" placeholder="you@example.com" required>
-    <button class="formkit-submit" data-element="submit" type="submit">Send the checklist</button>
+    <button class="formkit-submit" data-element="submit" type="submit">Send checklist</button>
   </div>
   <small>Japan Cost Update sends useful cost changes, not daily noise. Unsubscribe anytime. <a href="https://mutsumilabjp-eng.github.io/japan-cost-of-living-lab/privacy/">Privacy</a>.</small>
 </form>

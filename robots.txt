@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://mutsumilabjp-eng.github.io/japan-cost-of-living-lab/sitemap.xml
